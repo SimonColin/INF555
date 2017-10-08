@@ -96,10 +96,6 @@ public class HermiteSplineInterpolation extends Interpolation{
 		}
 			
 		for(int i=0;i<n;i++)
-<<<<<<< Updated upstream
-=======
-			
->>>>>>> Stashed changes
 			drawSegment(plotPoints[i], plotPoints[i+1]);
 	}
 	
