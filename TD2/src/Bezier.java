@@ -53,7 +53,23 @@ public class Bezier extends Curve {
 		Point_2[] b1=new Point_2[n+1]; // second control polygon
 		Bezier[] result=new Bezier[2]; // the pair of Bezier curves to return as result
 
-		Point_2[] array = this.points.clone();
+		Point_2[] array = controlPolygon.clone();
+		
+		b0[0] = array[0];
+		b1[0] = array[n];
+		for(int i = 0; i < n; i++)
+		{
+			for(int j = 0; j < n - i; j++)
+			{
+				Point_2 a = array[j].multiplyByScalar(1 - t);
+				Point_2 b = array[j + 1].multiplyByScalar(t);
+				Vector_2 v = new Vector_2(b.x, b.y);
+				array[j] = a.sum(v);
+			}
+			b0[i + 1] = array[0];
+			b1[i + 1] = array[n - i - 1];
+		}
+/*		Point_2[] array = this.points.clone();
 		for(int i = 0; i < array.length - 1; i++)
 		{
 			for(int j = 0; j < array.length - 1 - i; j++)
@@ -65,9 +81,11 @@ public class Bezier extends Curve {
 			}
 			b0[i] = array[0];
 			b1[i] = array[n - i];
-			b0[n] = b0[n - 1].multiplyByScalar(t).sum(new Vector_2(b1[n - 1].x, b1[n - 1].y));
-			b1[n] = b0[n];
-		}
+		} */
+/* 		Point_2 a = b0[n - 1].multiplyByScalar(t);
+		Point_2 b = b1[n - 1].multiplyByScalar(1 - t);
+		b0[n] = a.sum(new Vector_2(b.x, b.y));
+		b1[n] = b0[n]; */
 		result[0] = new Bezier(this.frame, b0, this.transformation);
 		result[1] = new Bezier(this.frame, b1, this.transformation);
 		
@@ -80,6 +98,7 @@ public class Bezier extends Curve {
 	 * Plot the curve (in the frame), for t=0..1, with step dt
 	 */
 	public void plotCurve(double dt) {
+	//	this.frame.stroke(255, 255, 255);
 		this.drawControlPolygon();
 		this.drawControlPoints();
 		Point_2 a = evaluate(0);
@@ -90,7 +109,8 @@ public class Bezier extends Curve {
 			drawSegment(a, b);
 			a = b;
 		}
-		Bezier[] sub = subdivide(dt);
+		Bezier[] sub = subdivide(0.5);
+		sub[0].frame.stroke(255, 0, 0);
 		sub[0].drawControlPolygon();
 		sub[1].drawControlPolygon();
 		
